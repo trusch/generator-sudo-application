@@ -21,8 +21,6 @@ module.exports = yeoman.generators.Base.extend({
       type: String
     });
 
-    console.log(this.arguments);
-
     this.application_name = this.name;
     this.application_desc = this.desc;
   },
@@ -78,7 +76,6 @@ module.exports = yeoman.generators.Base.extend({
 
   writing: {
     app: function () {
-      console.log(this);
       this.fs.copy(
         this.templatePath('bowerrc'),
         this.destinationPath('.bowerrc')
