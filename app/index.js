@@ -6,6 +6,22 @@ var yosay = require('yosay');
 module.exports = yeoman.generators.Base.extend({
   props: {},
 
+  constructor: function () {
+    yeoman.generators.Base.apply(this, arguments);
+    this.option('name', {
+      desc: 'the projectname',
+      type: String
+    });
+    this.option('desc', {
+      desc: 'short description of the project',
+      type: String
+    });
+    this.option('author', {
+      desc: 'the projects initial author',
+      type: String
+    });
+  },
+
   initializing: function () {
     this.pkg = require('../package.json');
   },
@@ -18,28 +34,46 @@ module.exports = yeoman.generators.Base.extend({
       'Team sudo\'s ' + chalk.red('application maker')
     ));
 
-    var prompts = [{
-      type    : 'input',
-      name    : 'application_name',
-      message : 'What\'s your application name?',
-      store   : true
-    },
-    {
-      type    : 'input',
-      name    : 'application_desc',
-      message : 'What\'s the description for your application?',
-      store   : true
-    },
-    {
-      type    : 'input',
-      name    : 'author',
-      message : 'What\'s your Name?',
-      store   : true
-    }];
+    var prompts = [];
+    
+    if(this.options['name'] === undefined){
+        prompts.push({
+        type    : 'input',
+        name    : 'application_name',
+        message : 'What\'s your application name?',
+        store   : true
+      });
+    }else{
+      this.props['application_name'] = this.options['name'];
+    }
+
+    if(this.options['desc'] === undefined){
+        prompts.push({
+          type    : 'input',
+          name    : 'application_desc',
+          message : 'What\'s the description for your application?',
+          store   : true
+        });
+    }else{
+      this.props['application_desc'] = this.options['desc'];
+    }
+    
+    if(this.options['author'] === undefined){
+        prompts.push({
+          type    : 'input',
+          name    : 'author',
+          message : 'What\'s your Name?',
+          store   : true
+        });
+    }else{
+      this.props['author'] = this.options['author'];
+    }
 
     var self = this;
     this.prompt(prompts, function (props) {
-      self.props = props;
+      self.props['application_name'] = props['application_name'];
+      self.props['application_desc'] = props['application_desc'];
+      self.props['author'] = props['author'];
       done();
     }.bind(this));
   },
