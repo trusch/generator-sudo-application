@@ -8,20 +8,25 @@ module.exports = yeoman.generators.Base.extend({
 
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
-    this.option('name', {
+    this.argument('name', {
       desc: 'the projectname',
       type: String
     });
-    this.option('desc', {
+    this.argument('desc', {
       desc: 'short description of the project',
       type: String
     });
-    this.option('author', {
+    this.argument('author', {
       desc: 'the projects initial author',
       type: String
     });
-  },
 
+    console.log(this.arguments);
+
+    this.application_name = this.name;
+    this.application_desc = this.desc;
+  },
+  
   initializing: function () {
     this.pkg = require('../package.json');
   },
@@ -36,50 +41,44 @@ module.exports = yeoman.generators.Base.extend({
 
     var prompts = [];
     
-    if(this.options['name'] === undefined){
+    if(this.application_name === undefined){
         prompts.push({
         type    : 'input',
         name    : 'application_name',
         message : 'What\'s your application name?',
         store   : true
       });
-    }else{
-      this.props['application_name'] = this.options['name'];
     }
 
-    if(this.options['desc'] === undefined){
+    if(this.application_desc === undefined){
         prompts.push({
           type    : 'input',
           name    : 'application_desc',
           message : 'What\'s the description for your application?',
           store   : true
         });
-    }else{
-      this.props['application_desc'] = this.options['desc'];
     }
     
-    if(this.options['author'] === undefined){
+    if(this.author === undefined){
         prompts.push({
           type    : 'input',
           name    : 'author',
           message : 'What\'s your Name?',
           store   : true
         });
-    }else{
-      this.props['author'] = this.options['author'];
     }
-
     var self = this;
     this.prompt(prompts, function (props) {
-      self.props['application_name'] = props['application_name'];
-      self.props['application_desc'] = props['application_desc'];
-      self.props['author'] = props['author'];
+      self.application_name = self.application_name || props['application_name'];
+      self.application_desc = self.application_desc || props['application_desc'];
+      self.author = self.author || props['author'];
       done();
     }.bind(this));
   },
 
   writing: {
     app: function () {
+      console.log(this);
       this.fs.copy(
         this.templatePath('bowerrc'),
         this.destinationPath('.bowerrc')
@@ -109,9 +108,9 @@ module.exports = yeoman.generators.Base.extend({
         this.templatePath('_package.json'),
         this.destinationPath('package.json'),
         {
-          "application_name": this.props.application_name,
-          "author": this.props.author,
-          "application_desc": this.props.application_desc
+          "application_name": this.application_name,
+          "author": this.author,
+          "application_desc": this.application_desc
         }
       );
 
@@ -119,9 +118,9 @@ module.exports = yeoman.generators.Base.extend({
         this.templatePath('_bower.json'),
         this.destinationPath('bower.json'),
         {
-          "application_name": this.props.application_name,
-          "author": this.props.author,
-          "application_desc": this.props.application_desc
+          "application_name": this.application_name,
+          "author": this.author,
+          "application_desc": this.application_desc
         }
       );
 
